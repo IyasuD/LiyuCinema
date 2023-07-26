@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
 import { useTitle } from "../hooks/useTitle";
 import Backup from "../assets/images/backup.png";
 
@@ -15,8 +19,30 @@ export const MovieDetail = () => {
 
   useEffect(() => {
     async function fetchMovie() {
+      const secret_name = "react_app_Secrete";
+
+      const client = new SecretsManagerClient({
+        region: "us-east-1",
+      });
+
+      let responsefomSecrete;
+
+      try {
+        responsefomSecrete = await client.send(
+          new GetSecretValueCommand({
+            SecretId: secret_name,
+            VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
+          })
+        );
+      } catch (error) {
+        // For a list of exceptions thrown, see
+        // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        throw error;
+      }
+
+      const secret = response.SecretString;
       const response = await fetch(
-        `https://api.themoviedb.org/3/movie/${params.id}?api_key=${process.env.REACT_APP_API_KEY}`
+        `https://api.themoviedb.org/3/movie/${params.id}?api_key=${secret}`
       );
       const json = await response.json();
       setMovie(json);
