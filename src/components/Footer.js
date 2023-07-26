@@ -11,11 +11,11 @@ export const Footer = () => {
         . All Rights Reserved.
       </span>
       <ul className="flex flex-wrap items-center mt-3 text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-        <li>
+        {/* <li>
           <a href="#" target="_blank" className="mr-4 hover:underline md:mr-6 ">
             Instagram
           </a>
-        </li>
+        </li> */}
         <li>
           <a
             href="https://www.linkedin.com/in/josh-g-5b97b1186/"
@@ -26,11 +26,11 @@ export const Footer = () => {
             LinkedIn
           </a>
         </li>
-        <li>
+        {/* <li>
           <a href="#" target="_blank" className="mr-4 hover:underline md:mr-6">
             Youtube
           </a>
-        </li>
+        </li> */}
         <li>
           <a
             href="https://github.com/IyasuD"
