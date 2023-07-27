@@ -40,7 +40,7 @@ export const useFetch = (apiPath, queryTerm = "") => {
     getApiKey();
   }, []);
 
-  const fetchApiData = async () => {
+  const fetchApiData = useCallback(async () => {
     try {
       if (!apiKey) return; // Wait for the API key to be available before making the fetch call
 
@@ -54,7 +54,7 @@ export const useFetch = (apiPath, queryTerm = "") => {
     } catch (error) {
       console.error("Error fetching API data:", error);
     }
-  };
+  }, [apiKey]);
 
   useEffect(() => {
     // Call the fetchApiData function when the apiKey is available
