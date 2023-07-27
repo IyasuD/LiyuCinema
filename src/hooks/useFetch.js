@@ -54,7 +54,7 @@ export const useFetch = (apiPath, queryTerm = "") => {
     } catch (error) {
       console.error("Error fetching API data:", error);
     }
-  }, [apiKey]);
+  }, [apiKey, apiPath, queryTerm]);
 
   useEffect(() => {
     // Call the fetchApiData function when the apiKey is available
