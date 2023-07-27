@@ -1,0 +1,32 @@
+name: Deploy to S3
+
+on:
+  push:
+    branches:
+      - main # Adjust this to the branch you want to trigger deployments from
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "14" # Adjust the version as needed
+
+      - name: Build the React app
+        run: npm install && npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Replace with your AWS region, e.g., us-east-1
+
+      - name: Deploy to S3
+        run: aws s3 sync build/ s3://liyucinema
