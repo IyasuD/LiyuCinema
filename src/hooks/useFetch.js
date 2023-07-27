@@ -33,28 +33,24 @@ export const useFetch = (apiPath, queryTerm = "") => {
     region: "us-east-1",
   });
 
-  const fetchSecrete = async () => {
-    let response;
-
-    try {
-      response = await client.send(
-        new GetSecretValueCommand({
-          SecretId: secret_name,
-          VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
-        })
-      );
-    } catch (error) {
-      // For a list of exceptions thrown, see
-      // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
-      throw error;
-    }
-
-    return response.SecretString;
-  };
-  const secret = fetchSecrete();
-  const url = `https://api.themoviedb.org/3/${apiPath}?api_key=${secret}&query=${queryTerm}`;
   useEffect(() => {
     async function fetchMovies() {
+      let response;
+
+      try {
+        response = await client.send(
+          new GetSecretValueCommand({
+            SecretId: secret_name,
+            VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
+          })
+        );
+      } catch (error) {
+        // For a list of exceptions thrown, see
+        // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        throw error;
+      }
+
+      const url = `https://api.themoviedb.org/3/${apiPath}?api_key=${response.SecretString}&query=${queryTerm}`;
       const res = await fetch(url);
       const json = await res.json();
       setData(json.results);
