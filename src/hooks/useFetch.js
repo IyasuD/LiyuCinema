@@ -61,7 +61,7 @@ export const useFetch = (apiPath, queryTerm = "") => {
     if (apiKey) {
       fetchApiData();
     }
-  }, [apiKey]);
+  }, [apiKey, fetchApiData]);
 
   return { data };
 };

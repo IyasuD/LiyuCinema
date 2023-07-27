@@ -25,10 +25,10 @@ export const MovieDetail = () => {
         region: "us-east-1",
       });
 
-      let responsefomSecrete;
+      let responsefromSecrete;
 
       try {
-        responsefomSecrete = await client.send(
+        responsefromSecrete = await client.send(
           new GetSecretValueCommand({
             SecretId: secret_name,
             VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
@@ -40,7 +40,7 @@ export const MovieDetail = () => {
         throw error;
       }
 
-      const secret = response.SecretString;
+      const secret = responsefromSecrete.SecretString;
       const response = await fetch(
         `https://api.themoviedb.org/3/movie/${params.id}?api_key=${secret}`
       );
