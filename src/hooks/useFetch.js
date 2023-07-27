@@ -1,5 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
-import AWS from "aws-sdk";
+import { useState, useEffect} from "react";
+//import AWS from "aws-sdk";
+// Use this code snippet in your app.
+// If you need more information about configurations or implementing the sample code, visit the AWS docs:
+// https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/getting-started.html
+
+import {
+  SecretsManagerClient,
+  GetSecretValueCommand,
+} from "@aws-sdk/client-secrets-manager";
+
 
 // export const useFetch = (apiPath, queryTerm = "") => {
 //   const [data, setData] = useState([]);
@@ -18,50 +27,42 @@ import AWS from "aws-sdk";
 // };
 export const useFetch = (apiPath, queryTerm = "") => {
   const [data, setData] = useState([]);
-  const [apiKey, setApiKey] = useState("");
 
+  const secret_name = "react_app_Secrete";
+
+const client = new SecretsManagerClient({
+  region: "us-east-1",
+});
+
+let response;
+
+try {
+  response = await client.send(
+    new GetSecretValueCommand({
+      SecretId: secret_name,
+      VersionStage: "AWSCURRENT", // VersionStage defaults to AWSCURRENT if unspecified
+    })
+  );
+} catch (error) {
+  // For a list of exceptions thrown, see
+  // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+  throw error;
+}
+
+const secret = response.SecretString;
+const url = `https://api.themoviedb.org/3/${apiPath}?api_key=${secret}&query=${queryTerm}`;
   useEffect(() => {
-    const getApiKey = async () => {
-      const secretsManager = new AWS.SecretsManager({
-        region: "us-east-1",
-      });
-
-      try {
-        const secretData = await secretsManager
-          .getSecretValue({ SecretId: "react_app_Secrete" })
-          .promise();
-        const apiKey = JSON.parse(secretData.SecretString).api_key; // Adjust the property name based on your secret structure
-        setApiKey(apiKey);
-      } catch (error) {
-        console.error("Error retrieving API key:", error);
-      }
-    };
-
-    getApiKey();
-  }, []);
-
-  const fetchApiData = useCallback(async () => {
-    try {
-      if (!apiKey) return; // Wait for the API key to be available before making the fetch call
-
-      const encodedApiKey = encodeURIComponent(apiKey);
-      const url = `https://api.themoviedb.org/3/${apiPath}?api_key=${encodedApiKey}&query=${queryTerm}`;
-
-      const response = await fetch(url);
-      const json = await response.json();
-      console.log("API Response:", json);
+    async function fetchMovies() {
+      const res = await fetch(url);
+      const json = await res.json();
       setData(json.results);
-    } catch (error) {
-      console.error("Error fetching API data:", error);
     }
-  }, [apiKey, apiPath, queryTerm]);
+    fetchMovies();
+  }, [url]);
 
-  useEffect(() => {
-    // Call the fetchApiData function when the apiKey is available
-    if (apiKey) {
-      fetchApiData();
-    }
-  }, [apiKey, fetchApiData]);
+//   return { data };
+
+  
 
   return { data };
 };
