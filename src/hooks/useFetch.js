@@ -29,13 +29,12 @@ export const useFetch = (apiPath, queryTerm = "") => {
 
   const secret_name = "react_app_Secrete";
 
-  const client = new SecretsManagerClient({
-    region: "us-east-1",
-  });
-
   useEffect(() => {
     async function fetchMovies() {
       let response;
+      const client = new SecretsManagerClient({
+        region: "us-east-1",
+      });
 
       try {
         response = await client.send(
@@ -56,7 +55,7 @@ export const useFetch = (apiPath, queryTerm = "") => {
       setData(json.results);
     }
     fetchMovies();
-  }, [apiPath, client, queryTerm]);
+  }, [apiPath, queryTerm]);
 
   //   return { data };
 
