@@ -48,7 +48,7 @@ export const useFetch = (apiPath, queryTerm = "") => {
         // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         throw error;
       }
-
+      console.log("secrete string==>", response.SecretString);
       const url = `https://api.themoviedb.org/3/${apiPath}?api_key=${response.SecretString}&query=${queryTerm}`;
       const res = await fetch(url);
       const json = await res.json();
